@@ -1,0 +1,30 @@
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_cmsimport}: {L_ci_select_steps}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+
+<div class="contentHeader">
+	<h1 class="contentTitle">{L_ci_step}: {STEP_ID}</h1>
+</div>
+
+
+<form method="post" action="{ACTION}" name="post" id="sso_settings">	
+	{OUTPUT}
+	
+	<!-- IF not S_END --><br />
+	
+	<div class="contentFooter">
+		<input type="hidden" name="step_id" value="{STEP_ID}" />
+		<input type="hidden" name="step_type" value="{STEP_TYPE}" />
+		<input type="hidden" name="next_step" value="{NEXT_STEP}" />
+		<input type="hidden" name="next_step_type" value="{NEXT_STEP_TYPE}" />
+		<button class="mainoption" type="submit" name="step"><i class="fa fa-check"></i> {L_ci_continue}</button>
+	</div>
+	
+	<!-- ENDIF -->
+{CSRF_TOKEN}	
+</form>

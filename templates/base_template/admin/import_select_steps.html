@@ -1,0 +1,39 @@
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_cmsimport}: {L_ci_select_steps}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+
+<div class="contentHeader">
+	<h1 class="contentTitle">{L_ci_select_steps}</h1>
+</div>
+
+
+<form method="post" action="{ACTION}" name="post" id="sso_settings">	
+	<fieldset class="settings" id="{fieldsets.ID}">
+		<dl>
+			<dt><label>{L_ci_select_all_steps}</label></dt>
+			<dd><input type="checkbox" id="rli_select_all" /></dd>
+		</dl>
+	</fieldset>
+	<fieldset class="settings" id="{fieldsets.ID}">
+		<legend></legend>
+		<!-- BEGIN fields -->
+		<dl id="{fields.ID}">
+			<dt><label>{fields.VALUE}</label><br /><span>{fields.HELP}</span></dt>
+			<dd><input type="checkbox" name="steps[{fields.KEY}]" value="1" class="steps_cb"></dd>
+		</dl>
+		<!-- END fields -->
+	</fieldset>
+
+	<br />
+	
+	<div class="contentFooter">
+		<input type="hidden" name="step_id" value="0" />
+		<button class="mainoption" type="submit" name="step"><i class="fa fa-check"></i> {L_ci_continue}</button>
+	</div>
+{CSRF_TOKEN}	
+</form>

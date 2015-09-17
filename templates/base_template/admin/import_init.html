@@ -1,0 +1,84 @@
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_cmsimport}: {L_ci_import}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+
+<div class="contentHeader">
+	<h1 class="contentTitle">{L_ci_import}</h1>
+</div>
+
+<script type="text/javascript">
+
+function hide_all(){
+	$('#f_316a8dad96, #f_03c6376b63, #fs_eb0a191797, #fs_slaves').hide();
+}
+
+function hide_all_dboptions(){
+	$('#f_16a6214c4a, #f_114feb0961, #f_d4982f060b, #f_ba3477c63d, #f_1a53b51971').hide();
+}
+
+
+$(document).ready(function(){
+	
+	hide_all();
+	
+	$('input[name=db_type]').on('change', function(){
+		var selected = $(this).val();
+
+		hide_all_dboptions();
+		if (selected == 0){
+			$('#f_1a53b51971').show();
+		}
+		if(selected == 1){
+			$('#f_16a6214c4a, #f_114feb0961, #f_d4982f060b, #f_ba3477c63d, #f_1a53b51971').show();
+		}
+	})
+	
+	//Startup Radio
+	var radiosel = $('input[name=db_type]:checked').val();
+	hide_all_dboptions();
+	if (radiosel == 0){
+		$('#f_1a53b51971').show();
+	}
+	if(radiosel == 1){
+		$('#f_16a6214c4a, #f_114feb0961, #f_d4982f060b, #f_ba3477c63d, #f_1a53b51971').show();
+	}
+})
+
+</script>
+
+
+<form method="post" action="{ACTION}" name="post" id="sso_settings">	
+	<!-- BEGIN fieldsets -->
+	<!-- IF fieldsets.INFO -->
+	<div class="infobox infobox-large infobox-blue clearfix">
+		<i class="fa fa-info-circle fa-4x pull-left"></i> {fieldsets.INFO}
+	</div>
+
+	<!-- ENDIF -->
+
+	<fieldset class="settings" id="{fieldsets.ID}">
+		<legend>{fieldsets.NAME}</legend>
+
+		<!-- BEGIN fields -->
+		<dl id="{fieldsets.fields.ID}">
+			<dt><label>{fieldsets.fields.NAME}</label><br /><span>{fieldsets.fields.HELP}</span></dt>
+			<dd>{fieldsets.fields.FIELD}{fieldsets.fields.TEXT}</dd>
+		</dl>
+		<!-- END fields -->
+	</fieldset>
+	<!-- END fieldsets -->
+	
+	
+
+	<br />
+	
+	<div class="contentFooter">
+		<button class="mainoption" type="submit" name="step0"><i class="fa fa-check"></i> {L_ci_continue}</button>
+	</div>
+{CSRF_TOKEN}	
+</form>
