@@ -25,16 +25,46 @@ if (!defined('EQDKP_INC'))
 }
 
 $lang = array(
-  'sk_startorder'                   => 'SK Startreihenfolge',
-
-  // Description
-  'sk_startorder_short_desc'        => 'SK Startreihenfolge bearbeiten',
-  'sk_startorder_long_desc'         => 'Ändere die Reihenfolge der SK-Listen',
-  
-  'skso_plugin_not_installed'		=> 'Das SK-Startreihenfolge-Plugin ist nicht installiert.',
-  'skso_change_order'        		=> 'SK Startreihenfolge bearbeiten',
-  'skso_no_sk_layout'				=> 'Da du kein SK-Layout verwendest, kannst du dieses Plugin nicht verwenden.',
-		
-);
+	'cmsimport'                  	=> 'CMS-Import',
+	
+	// Description
+	'cmsimport_short_desc'       	=> 'Importiere Daten von anderen CMS',
+	'cmsimport_long_desc'        	=> 'Importiere Daten von anderen CMS wie Wordpress oder Joomla',
+	  
+	'ci_plugin_not_installed'		=> 'Das CMS-Import-Plugin ist nicht installiert.',
+	'ci_import'        				=> 'Importieren',
+	'ci_continue'					=> 'Weiter',
+	'ci_db_types'	=> array(
+			'Selbe Datenbank', 'Andere Datenbank', 'Bridge-Verbindung verwenden'
+	),		
+	'ci_fs_general' => 'Importer-Einstellungen',
+	'ci_f_import_type' => 'Wähle das zu importierende System aus',
+	'ci_f_url' => 'Link zu deinem CMS',
+	'ci_f_help_url' => 'Trage hier den kompletten Link zu deinem CMS ein',
+	'ci_fs_connection' => 'Verbindungs-Einstellungen',
+	'ci_f_db_type' => 'Wähle aus, wie das andere CMS zu erreichen ist.',
+	'ci_f_db_host'	=> 'Datenbank-Host',
+	'ci_f_db_user'	=> 'Datenbank-Benutzer',
+	'ci_f_db_password' => 'Datenbank-Passwort',
+	'ci_f_db_database' => 'Datenbank-Name',
+	'ci_f_db_prefix'	=> 'Installations-Prefix',
+	'ci_f_help_db_prefix'	=> 'Das Prefix der Master EQdkp Plus Installation, z.B. "wp42_"',
+	'ci_conn_error' => 'Es konnte keine Verbindung zum anderen CMS hergestellt werden. Bitte überprüfe deine Einstellungen.',
+	'ci_select_steps' => 'Schritte auswählen',
+	'ci_select_all_steps' => 'Wähle alle Schritte aus',
+	'ci_step' => 'Schritt',
+	'ci_import_error' => 'Ein Fehler ist während des importierens aufgetreten. Bitte versuche den Import erneut.',			
+	'ci_step_user' => 'Benutzer',
+	'ci_step_pages'=> 'Seiten',
+	'ci_step_posts'=> 'Beiträge',
+	'ci_user_import_hint' => 'Bitte beachte, dass nur die Benutzer importiert werden, und keine Zuordnungen zu Benutzergruppen. Die Benutzer werden in die Standardgruppe hinzugefügt.<br /><br />Beachte bitte auch, dass keine Passwörter importiert werden können. Importierte Benutzer sollen ein neues Passwort anfordern, sofern keine CMS-Bridge verwendet wird.',
+	'ci_imported_users' => 'Importierte Benutzer',
+	'ci_imported_pages' => 'Importierte Seiten',
+	'ci_imported_posts' => 'Importierte Beiträge',
+	'ci_end_message' => 'Der Import wurde beendet. Bitte überprüfe die Berechtigungen aller importierten Objekte.',
+	'ci_default_user_pages' => 'Wähle einen Benutzer aus für Artikel ohne Benutzer',
+	'ci_default_category_posts' => 'Wähle eine Kategorie für die zu importierenden Beiträge aus',
+	'ci_default_category_pages' => 'Wähle eine Kategorie für die zu importierenden Seiten aus',
+ );
 
 ?>

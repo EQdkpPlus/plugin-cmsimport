@@ -45,7 +45,7 @@ if (!class_exists("importer_generic")){
 		}
 		
 		public function end(){
-			return "This is the normal end.";
+			return $this->user->lang('ci_end_message');
 		}
 	}
 }

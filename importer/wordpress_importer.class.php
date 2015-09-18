@@ -32,6 +32,7 @@ if (!class_exists("wordpress_importer")){
 		
 		public $arrSteps = array(
 				'user',
+				'posts',
 				'pages',
 		);
 		
@@ -48,7 +49,7 @@ if (!class_exists("wordpress_importer")){
 		}
 		
 		public function step_user_output(){
-			return "Please not the only the Users are imported, but no mapping to Usergroups. They are added to the default usergroup.";
+			return $this->user->lang('ci_user_import_hint').'<br />';
 		}
 		
 		public function step_user(){
@@ -82,7 +83,7 @@ if (!class_exists("wordpress_importer")){
 			$this->pdh->process_hook_queue();
 			
 			//Display imported Users
-			$out = '<h2>Imported Users</h2>
+			$out = '<h2>'.$this->user->lang('ci_imported_users').'</h2>
 					<table class="table">';
 			
 			foreach($arrImported as $val){
@@ -107,15 +108,11 @@ if (!class_exists("wordpress_importer")){
 			
 			$out = '<fieldset class="settings" id="{fieldsets.ID}">
 		<dl>
-			<dt><label>Select user for articles without an user</label></dt>
+			<dt><label>'.$this->user->lang('ci_default_user_pages').'</label></dt>
 			<dd>'.new hdropdown('user', array('options' => $arrUser, 'value' => $this->user->id)).'</dd>
 		</dl>
 		<dl>
-			<dt><label>Select Category for the posts</label></dt>
-			<dd>'.new hdropdown('category_posts', array('options' => $arrCategories, 'value' => 2)).'</dd>
-		</dl>
-		<dl>
-			<dt><label>Select Category for the pages</label></dt>
+			<dt><label>'.$this->user->lang('ci_default_category_pages').'</label></dt>
 			<dd>'.new hdropdown('category_pages', array('options' => $arrCategories, 'value' => 2)).'</dd>
 		</dl>
 	</fieldset>';
@@ -125,7 +122,6 @@ if (!class_exists("wordpress_importer")){
 		
 		public function step_pages(){
 			$defaultUser = $this->in->get('user', 0);
-			$intDefaultCategoryPosts = $this->in->get('category_posts', 0);
 			$intDefaultCategoryPages = $this->in->get('category_pages', 0);
 			
 			$arrUser = $this->pdh->aget('user', 'name', 0, array($this->pdh->get('user', 'id_list')));
@@ -135,7 +131,7 @@ if (!class_exists("wordpress_importer")){
 			}
 			
 			$objDatabase = $this->objCIFunctions->createConnection();
-			$objResult = $objDatabase->query('SELECT p.*, u.user_login FROM __posts p, __users u WHERE p.post_author = u.ID AND (post_type="post" OR post_type="page") AND (post_status="publish" OR post_status="draft");');
+			$objResult = $objDatabase->query('SELECT p.*, u.user_login FROM __posts p, __users u WHERE p.post_author = u.ID AND (post_type="page") AND (post_status="publish" OR post_status="draft");');
 			if($objResult){
 				while($arrRow = $objResult->fetchAssoc()){
 					//add($strTitle, $strText, $arrTags, $strPreviewimage, $strAlias, $intPublished, 
@@ -150,7 +146,7 @@ if (!class_exists("wordpress_importer")){
 						(($arrRow['post_name'] != "") ? $arrRow['post_name'] : $arrRow['post_title']),
 						(($arrRow['post_status'] == 'publish') ? 1 : 0),
 						0,
-						(($arrRow['post_type'] == 'post') ? $intDefaultCategoryPosts : $intDefaultCategoryPages),
+						$intDefaultCategoryPages,
 						((isset($arrUserMapping[clean_username($arrRow['user_login'])])) ? $arrUserMapping[clean_username($arrRow['user_login'])] : $defaultUser),
 						(($arrRow['comment_status'] == 'open') ? 1 : 0 ),
 						(($arrRow['comment_status'] == 'open') ? 1 : 0 ),
@@ -193,7 +189,7 @@ if (!class_exists("wordpress_importer")){
 			$this->pdh->process_hook_queue();
 			
 			//Display imported Posts
-			$out = '<h2>Imported Posts</h2>
+			$out = '<h2>'.$this->user->lang('ci_imported_pages').'</h2>
 					<table class="table">';
 			
 			foreach($arrImported as $val){
@@ -205,8 +201,110 @@ if (!class_exists("wordpress_importer")){
 			return $out;
 		}
 		
-		public function end(){
-			return "Import succeeded. Pleas check the permissions of the imported users and articles.";
+		public function step_posts_output(){
+			//Select User that will be used for articles that don't have a user
+			$arrUser = $this->pdh->aget('user', 'name', 0, array($this->pdh->get('user', 'id_list')));
+				
+			$arrCategoryIDs = $this->pdh->sort($this->pdh->get('article_categories', 'id_list', array()), 'article_categories', 'sort_id', 'asc');
+			$arrCategories = array();
+		
+			foreach($arrCategoryIDs as $caid){
+				$arrCategories[$caid] = $this->pdh->get('article_categories', 'name_prefix', array($caid)).$this->pdh->get('article_categories', 'name', array($caid));
+			}
+				
+			$out = '<fieldset class="settings" id="{fieldsets.ID}">
+		<dl>
+			<dt><label>'.$this->user->lang('ci_default_user_pages').'</label></dt>
+			<dd>'.new hdropdown('user', array('options' => $arrUser, 'value' => $this->user->id)).'</dd>
+		</dl>
+		<dl>
+			<dt><label>'.$this->user->lang('ci_default_category_posts').'</label></dt>
+			<dd>'.new hdropdown('category_posts', array('options' => $arrCategories, 'value' => 2)).'</dd>
+		</dl>
+	</fieldset>';
+				
+			return $out;
+		}
+		
+		public function step_posts(){
+			$defaultUser = $this->in->get('user', 0);
+			$intDefaultCategoryPosts = $this->in->get('category_posts', 0);
+				
+			$arrUser = $this->pdh->aget('user', 'name', 0, array($this->pdh->get('user', 'id_list')));
+			$arrUserMapping = array();
+			foreach($arrUser as $userid => $strUsername){
+				$arrUserMapping[clean_username($strUsername)] = $userid;
+			}
+				
+			$objDatabase = $this->objCIFunctions->createConnection();
+			$objResult = $objDatabase->query('SELECT p.*, u.user_login FROM __posts p, __users u WHERE p.post_author = u.ID AND (post_type="post") AND (post_status="publish" OR post_status="draft");');
+			if($objResult){
+				while($arrRow = $objResult->fetchAssoc()){
+					//add($strTitle, $strText, $arrTags, $strPreviewimage, $strAlias, $intPublished,
+					//$intFeatured, $intCategory, $intUserID, $intComments, $intVotes,$intDate,
+					//$strShowFrom,$strShowTo, $intHideHeader){
+						
+					$intArticleID = $this->pdh->put('articles', 'add', array(
+							$arrRow['post_title'],
+							$this->replace_images($arrRow['post_content']),
+							array(),
+							'',
+							(($arrRow['post_name'] != "") ? $arrRow['post_name'] : $arrRow['post_title']),
+							(($arrRow['post_status'] == 'publish') ? 1 : 0),
+							0,
+							$intDefaultCategoryPosts,
+							((isset($arrUserMapping[clean_username($arrRow['user_login'])])) ? $arrUserMapping[clean_username($arrRow['user_login'])] : $defaultUser),
+							(($arrRow['comment_status'] == 'open') ? 1 : 0 ),
+							(($arrRow['comment_status'] == 'open') ? 1 : 0 ),
+							(strtotime($arrRow['post_date_gmt'])) ? strtotime($arrRow['post_date_gmt']) : strtotime($arrRow['post_modified_gmt']),
+							'',
+							'',
+							0,
+					));
+						
+					$arrImported[] = $arrRow['post_title'];
+						
+					if($intArticleID && (int)$arrRow['comment_count'] > 0){
+						$objCommentResult = $objDatabase->prepare('SELECT c.*, u.user_login FROM __comments c, __users u WHERE c.user_id = u.ID AND comment_post_ID = ? AND user_id > 0;')->execute($arrRow['ID']);
+						if($objCommentResult){
+							while($arrCommentRow = $objCommentResult->fetchAssoc()){
+								//insert($attach_id, $user_id, $comment, $page, $reply_to)
+								$userId = (isset($arrUserMapping[clean_username($arrCommentRow['user_login'])])) ? $arrUserMapping[clean_username($arrCommentRow['user_login'])] : false;
+		
+								if($userId){
+									$objQuery = $this->db->prepare("INSERT INTO __comments :p")->set(array(
+											'attach_id'		=> $intArticleID,
+											'date'			=> strtotime($arrCommentRow['comment_date_gmt']),
+											'userid'		=> $userId,
+											'text'			=> str_replace("\n", "[br]", filter_var($arrCommentRow['comment_content'])),
+											'page'			=> 'articles',
+											'reply_to'		=> 0,
+									))->execute();
+										
+									if($objQuery){
+										$id = $objQuery->insertId;
+										$this->pdh->enqueue_hook('comment_update', $id);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+				
+			$this->pdh->process_hook_queue();
+				
+			//Display imported Posts
+			$out = '<h2>'.$this->user->lang('ci_imported_posts').'</h2>
+					<table class="table">';
+				
+			foreach($arrImported as $val){
+				$out .= '<tr><td>'.$val.'</td></tr>';
+			}
+				
+			$out .= '</table>';
+				
+			return $out;
 		}
 		
 		

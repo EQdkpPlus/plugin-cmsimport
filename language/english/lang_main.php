@@ -31,7 +31,7 @@ $lang = array(
 	'cmsimport_short_desc'       	=> 'Import Data from other CMS',
 	'cmsimport_long_desc'        	=> 'Import Data from other CMS, like Wordpress or Joomla.',
 	  
-	'ci_plugin_not_installed'		=> 'The SK Startorder-Plugin is not installed.',
+	'ci_plugin_not_installed'		=> 'The CMS-Import-Plugin is not installed.',
 	'ci_import'        			=> 'Import',
 	'ci_continue'					=> 'Continue',
 	'ci_db_types'	=> array(
@@ -52,6 +52,20 @@ $lang = array(
 	'ci_conn_error' => 'No connection possible with CMS. Please check your settings.',
 	'ci_select_steps' => 'Select Steps',
 	'ci_select_all_steps' => 'Select all Steps',
+	'ci_step' => 'Step',
+	'ci_import_error' => 'An error occured during import. Please try the import again.',	
+		
+	'ci_step_user' => 'User',
+	'ci_step_pages'=> 'Pages',
+	'ci_step_posts'=> 'Posts',
+	'ci_user_import_hint' => 'Please note that only the users are imported, but no mapping to usergroups. The users are added to the default group.<br /><br />Note also that the passwords cannot be imported, therefore the user should request a new password, if no CMS-Bridge is used.',
+	'ci_imported_users' => 'Imported users',
+	'ci_imported_pages' => 'Imported pages',
+	'ci_imported_posts' => 'Imported posts',
+	'ci_end_message' => 'The import is finished. Please check the permissions of the imported objects.',
+	'ci_default_user_pages' => 'Select user for articles without an user',
+	'ci_default_category_posts' => 'Select the category for the imported posts',
+	'ci_default_category_pages' => 'Select the category for the imported pages',
  );
 
 ?>

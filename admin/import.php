@@ -83,7 +83,8 @@ class CMSAdminImport extends page_generic
   	
   	//Make Connection Test
   	$blnResult = $this->objCIFunctions->checkConnection($arrValues['import_type'], $arrValues['db_type'], $arrValues['db_host'], $arrValues['db_user'], $arrValues['db_password'], $arrValues['db_database'], $arrValues['db_prefix']);
-  	if($blnResult){
+  	
+  	if($blnResult === true){
   		//Save Settings
   		$this->config->set('general_data', $arrValues, 'cmsimport');
   		
@@ -94,7 +95,7 @@ class CMSAdminImport extends page_generic
   		}
   	} else {
   		//Error Message and display again
-  		$this->core->message($this->user->lang('ci_conn_error'), $this->user->lang('error'), 'red');
+  		$this->core->message($this->user->lang('ci_conn_error').'<br /><br />'.$blnResult, $this->user->lang('error'), 'red');
   		$this->display();
   		return;
   	}
@@ -157,7 +158,7 @@ class CMSAdminImport extends page_generic
   	//End whole import if a method does not return a string or true or something like that.
   	if($strResult === false || $strResult === NULL){
   		$this->tpl->assign_vars(array(
-  				'OUTPUT' 			=> "An error occured. Please import again.",
+  				'OUTPUT' 			=> $this->user->lang('ci_import_error'),
   				'S_END'				=> true,
   		));
   		
@@ -184,10 +185,11 @@ class CMSAdminImport extends page_generic
   		'NEXT_STEP' 		=> $next_step,
   		'NEXT_STEP_TYPE' 	=> $next_step_type,
   		'OUTPUT' 			=> $strResult,
+  		'STEP_NAME'			=> ($this->user->lang('ci_step_'.$step_id)) ? $this->user->lang('ci_step_'.$step_id) : ucfirst($step_id),
   	));
   	
   	$this->core->set_vars(array(
-  		'page_title'    => $this->user->lang('ci_select_steps'),
+  		'page_title'    => $this->user->lang('ci_step').': '.($this->user->lang('ci_step_'.$step_id)) ? $this->user->lang('ci_step_'.$step_id) : ucfirst($step_id),
   		'template_path' => $this->pm->get_data('cmsimport', 'template_path'),
   		'template_file' => 'admin/import_step.html',
   		'display'       => true
@@ -200,7 +202,7 @@ class CMSAdminImport extends page_generic
   	foreach($arrSteps as $key => $val){
   		$this->tpl->assign_block_vars('fields', array(
   				'KEY'	=> $val,
-  				'VALUE' => ucfirst($val),
+  				'VALUE' => ($this->user->lang('ci_step_'.$val)) ? $this->user->lang('ci_step_'.$val) : ucfirst($val),
   		));
   	}
   		
