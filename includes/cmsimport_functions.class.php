@@ -131,14 +131,14 @@ if (!class_exists("CMSImportFunctions")){
 			if((int)$db_type == 0){
 				//Same DB
 				try {
-					$mydb = dbal::factory(array('dbtype' => registry::get_const('dbtype'), 'open'=>true, 'debug_prefix' => 'sso_connector_', 'table_prefix' => trim($db_prefix)));
+					$mydb = dbal::factory(array('dbtype' => registry::get_const('dbtype'), 'open'=>true, 'debug_prefix' => 'cmsimport_', 'table_prefix' => trim($db_prefix)));
 				} catch(DBALException $e){
 					$mydb = false;
 				}
 			} elseif((int)$db_type == 1){
 				//Other DB
 				try {
-					$mydb = dbal::factory(array('dbtype' => registry::get_const('dbtype'), 'debug_prefix' => 'sso_connector_', 'table_prefix' => trim($db_prefix)));
+					$mydb = dbal::factory(array('dbtype' => registry::get_const('dbtype'), 'debug_prefix' => 'cmsimport_', 'table_prefix' => trim($db_prefix)));
 					$mydb->connect($db_host, $db_database, $db_user, $db_password);
 				} catch(DBALException $e){
 					$mydb = false;
