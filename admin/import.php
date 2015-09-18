@@ -135,6 +135,8 @@ class CMSAdminImport extends page_generic
   		//Execute End
   		$strResult = $objImporter->end();
   		
+  		$this->config->del(false, 'cmsimport');
+  		
   		$this->tpl->assign_vars(array(
   			'OUTPUT' 			=> $strResult,
   			'S_END'				=> true,
@@ -158,6 +160,8 @@ class CMSAdminImport extends page_generic
   				'OUTPUT' 			=> "An error occured. Please import again.",
   				'S_END'				=> true,
   		));
+  		
+  		$this->config->del(false, 'cmsimport');
   			
   		$this->core->set_vars(array(
   				'page_title'    => $this->user->lang('ci_select_steps'),

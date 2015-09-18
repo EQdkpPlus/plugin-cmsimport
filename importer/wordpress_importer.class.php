@@ -142,7 +142,7 @@ if (!class_exists("wordpress_importer")){
 					//$intFeatured, $intCategory, $intUserID, $intComments, $intVotes,$intDate, 
 					//$strShowFrom,$strShowTo, $intHideHeader){
 					
-					$this->pdh->put('articles', 'add', array(
+					$intArticleID = $this->pdh->put('articles', 'add', array(
 						$arrRow['post_title'],
 						$this->replace_images($arrRow['post_content']),
 						array(),
@@ -161,6 +161,32 @@ if (!class_exists("wordpress_importer")){
 					));
 					
 					$arrImported[] = $arrRow['post_title'];
+					
+					if($intArticleID && (int)$arrRow['comment_count'] > 0){
+						$objCommentResult = $objDatabase->prepare('SELECT c.*, u.user_login FROM __comments c, __users u WHERE c.user_id = u.ID AND comment_post_ID = ? AND user_id > 0;')->execute($arrRow['ID']);
+						if($objCommentResult){
+							while($arrCommentRow = $objCommentResult->fetchAssoc()){
+								//insert($attach_id, $user_id, $comment, $page, $reply_to) 
+								$userId = (isset($arrUserMapping[clean_username($arrCommentRow['user_login'])])) ? $arrUserMapping[clean_username($arrCommentRow['user_login'])] : false;
+								
+								if($userId){
+									$objQuery = $this->db->prepare("INSERT INTO __comments :p")->set(array(
+											'attach_id'		=> $intArticleID,
+											'date'			=> strtotime($arrCommentRow['comment_date_gmt']),
+											'userid'		=> $userId,
+											'text'			=> str_replace("\n", "[br]", filter_var($arrCommentRow['comment_content'])),
+											'page'			=> 'articles',
+											'reply_to'		=> 0,
+									))->execute();
+									
+									if($objQuery){
+										$id = $objQuery->insertId;
+										$this->pdh->enqueue_hook('comment_update', $id);
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 			
