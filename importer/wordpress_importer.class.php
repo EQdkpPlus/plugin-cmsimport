@@ -30,6 +30,11 @@ if (!defined('EQDKP_INC')){
 if (!class_exists("wordpress_importer")){
 	class wordpress_importer extends importer_generic {
 		
+		public $arrSteps = array(
+				'user',
+				'pages',
+		);
+		
 		public function checkConnection($objDatabase){
 			if($objDatabase){
 				$objResult = $objDatabase->query('SELECT count(*) as count FROM __users;');
@@ -42,7 +47,163 @@ if (!class_exists("wordpress_importer")){
 			return false;
 		}
 		
+		public function step_user_output(){
+			return "Please not the only the Users are imported, but no mapping to Usergroups. They are added to the default usergroup.";
+		}
 		
+		public function step_user(){
+			$objDatabase = $this->objCIFunctions->createConnection();
+			
+			//Get User
+			$objResult = $objDatabase->query('SELECT * FROM __users;');
+			if($objResult){
+				while($arrUserdata = $objResult->fetchAssoc()){
+					if ($this->pdh->get('user', 'check_username', array(sanitize($arrUserdata['user_login']))) != 'false'){
+						$strPassword = md5(generateRandomBytes());
+						$salt = $this->user->generate_salt();
+						$new_password = $this->user->encrypt_password($strPassword, $salt).':'.$salt;
+						$arrData = array(
+								'username'				=> $arrUserdata['user_login'],
+								'user_password'			=> $new_password,
+								'user_email'			=> register('encrypt')->encrypt($arrUserdata['user_email']),
+								'user_active'			=> 1,
+								'rules'					=> 1,
+								'user_registered'		=> strtotime($arrUserdata['user_registered']),
+						);
+						
+						$intUserID = $this->pdh->put('user', 'insert_user', array($arrData, false));
+						if(!$intUserID) return false;
+						
+						$arrImported[] = $arrUserdata['user_login'];
+					}
+				}
+			}
+			
+			$this->pdh->process_hook_queue();
+			
+			//Display imported Users
+			$out = '<h2>Imported Users</h2>
+					<table class="table">';
+			
+			foreach($arrImported as $val){
+				$out .= '<tr><td>'.$val.'</td></tr>';
+			}
+			
+			$out .= '</table>';
+			
+			return $out;
+		}
+		
+		public function step_pages_output(){
+			//Select User that will be used for articles that don't have a user
+			$arrUser = $this->pdh->aget('user', 'name', 0, array($this->pdh->get('user', 'id_list')));
+			
+			$arrCategoryIDs = $this->pdh->sort($this->pdh->get('article_categories', 'id_list', array()), 'article_categories', 'sort_id', 'asc');
+			$arrCategories = array();
+
+			foreach($arrCategoryIDs as $caid){
+				$arrCategories[$caid] = $this->pdh->get('article_categories', 'name_prefix', array($caid)).$this->pdh->get('article_categories', 'name', array($caid));
+			}
+			
+			$out = '<fieldset class="settings" id="{fieldsets.ID}">
+		<dl>
+			<dt><label>Select user for articles without an user</label></dt>
+			<dd>'.new hdropdown('user', array('options' => $arrUser, 'value' => $this->user->id)).'</dd>
+		</dl>
+		<dl>
+			<dt><label>Select Category for the posts</label></dt>
+			<dd>'.new hdropdown('category_posts', array('options' => $arrCategories, 'value' => 2)).'</dd>
+		</dl>
+		<dl>
+			<dt><label>Select Category for the pages</label></dt>
+			<dd>'.new hdropdown('category_pages', array('options' => $arrCategories, 'value' => 2)).'</dd>
+		</dl>
+	</fieldset>';
+			
+			return $out;
+		}
+		
+		public function step_pages(){
+			$defaultUser = $this->in->get('user', 0);
+			$intDefaultCategoryPosts = $this->in->get('category_posts', 0);
+			$intDefaultCategoryPages = $this->in->get('category_pages', 0);
+			
+			$arrUser = $this->pdh->aget('user', 'name', 0, array($this->pdh->get('user', 'id_list')));
+			$arrUserMapping = array();
+			foreach($arrUser as $userid => $strUsername){
+				$arrUserMapping[clean_username($strUsername)] = $userid;
+			}
+			
+			$objDatabase = $this->objCIFunctions->createConnection();
+			$objResult = $objDatabase->query('SELECT p.*, u.user_login FROM __posts p, __users u WHERE p.post_author = u.ID AND (post_type="post" OR post_type="page") AND (post_status="publish" OR post_status="draft");');
+			if($objResult){
+				while($arrRow = $objResult->fetchAssoc()){
+					//add($strTitle, $strText, $arrTags, $strPreviewimage, $strAlias, $intPublished, 
+					//$intFeatured, $intCategory, $intUserID, $intComments, $intVotes,$intDate, 
+					//$strShowFrom,$strShowTo, $intHideHeader){
+					
+					$this->pdh->put('articles', 'add', array(
+						$arrRow['post_title'],
+						$this->replace_images($arrRow['post_content']),
+						array(),
+						'',
+						(($arrRow['post_name'] != "") ? $arrRow['post_name'] : $arrRow['post_title']),
+						(($arrRow['post_status'] == 'publish') ? 1 : 0),
+						0,
+						(($arrRow['post_type'] == 'post') ? $intDefaultCategoryPosts : $intDefaultCategoryPages),
+						((isset($arrUserMapping[clean_username($arrRow['user_login'])])) ? $arrUserMapping[clean_username($arrRow['user_login'])] : $defaultUser),
+						(($arrRow['comment_status'] == 'open') ? 1 : 0 ),
+						(($arrRow['comment_status'] == 'open') ? 1 : 0 ),
+						(strtotime($arrRow['post_date_gmt'])) ? strtotime($arrRow['post_date_gmt']) : strtotime($arrRow['post_modified_gmt']),
+						'',
+						'',
+						0,
+					));
+					
+					$arrImported[] = $arrRow['post_title'];
+				}
+			}
+			
+			$this->pdh->process_hook_queue();
+			
+			//Display imported Posts
+			$out = '<h2>Imported Posts</h2>
+					<table class="table">';
+			
+			foreach($arrImported as $val){
+				$out .= '<tr><td>'.$val.'</td></tr>';
+			}
+			
+			$out .= '</table>';
+			
+			return $out;
+		}
+		
+		public function end(){
+			return "Import succeeded. Pleas check the permissions of the imported users and articles.";
+		}
+		
+		
+		private function replace_images($strText){
+			$output_array = array();
+			$arrMatches = preg_match_all("/src=\"(.*)\"/isxmU", $strText, $output_array);
+			
+			$new = $strText;
+			
+			$objBBcode = register('bbcode');
+			
+			foreach($output_array[1] as $key => $val){
+				
+				if(stripos($val, "wp-content") && strpos($val, "://")){
+					$strImage = $objBBcode->DownloadImage($val);
+					if($strImage){
+						$new = str_replace($val, $this->env->root_to_serverpath($strImage), $new);
+					}		
+				}
+			}
+			
+			return $new;
+		}
 	}
 }
 	

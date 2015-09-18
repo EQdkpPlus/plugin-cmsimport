@@ -31,6 +31,12 @@ if (!class_exists("importer_generic")){
 	abstract class importer_generic extends gen_class{
 		
 		public $arrSteps = array();
+		protected $objCIFunctions;
+		
+		public function __construct(){
+			include_once $this->root_path.'plugins/cmsimport/includes/cmsimport_functions.class.php';
+			$this->objCIFunctions = register('CMSImportFunctions');
+		}
 		
 		abstract public function checkConnection($objDatabase);
 		

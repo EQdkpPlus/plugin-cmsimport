@@ -119,7 +119,7 @@ if (!class_exists("CMSImportFunctions")){
 			return false;
 		}
 		
-		public function createConnection($db_type, $db_host, $db_user, $db_password, $db_database, $db_prefix){
+		public function createConnection(){
 			$arrOptions = $this->config->get('general_data', 'cmsimport');
 			$db_type = $arrOptions['db_type'];
 			$db_host = $arrOptions['db_host']; 

@@ -152,6 +152,21 @@ class CMSAdminImport extends page_generic
   	$strFunctionName = "step_".$next_step.(($next_step_type == "output") ? '_output' : '');
   	$strResult = $objImporter->$strFunctionName();
   	
+  	//End whole import if a method does not return a string or true or something like that.
+  	if($strResult === false || $strResult === NULL){
+  		$this->tpl->assign_vars(array(
+  				'OUTPUT' 			=> "An error occured. Please import again.",
+  				'S_END'				=> true,
+  		));
+  			
+  		$this->core->set_vars(array(
+  				'page_title'    => $this->user->lang('ci_select_steps'),
+  				'template_path' => $this->pm->get_data('cmsimport', 'template_path'),
+  				'template_file' => 'admin/import_step.html',
+  				'display'       => true
+  		));
+  	}
+  	
   	$step_id = $next_step;
   	$step_type = $next_step_type;
 
@@ -168,10 +183,10 @@ class CMSAdminImport extends page_generic
   	));
   	
   	$this->core->set_vars(array(
-  			'page_title'    => $this->user->lang('ci_select_steps'),
-  			'template_path' => $this->pm->get_data('cmsimport', 'template_path'),
-  			'template_file' => 'admin/import_step.html',
-  			'display'       => true
+  		'page_title'    => $this->user->lang('ci_select_steps'),
+  		'template_path' => $this->pm->get_data('cmsimport', 'template_path'),
+  		'template_file' => 'admin/import_step.html',
+  		'display'       => true
   	));
   }
   
