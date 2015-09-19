@@ -102,6 +102,8 @@ class CMSAdminImport extends page_generic
   }
   
   public function handle_steps(){
+  	@set_time_limit(0);
+  	
   	$arrValues = $this->config->get('general_data', 'cmsimport');
   	$step_id = $this->in->get('step_id');
   	$step_type = $this->in->get('step_type');
