@@ -41,7 +41,7 @@ class cmsimport extends plugin_generic
     return array_merge(parent::$shortcuts, $shortcuts);
   }
 
-  public $version    = '1.0.0';
+  public $version    = '1.1.0';
   public $build      = '';
   public $copyright  = 'GodMod';
   public $vstatus    = 'Alpha';
@@ -68,12 +68,12 @@ class cmsimport extends plugin_generic
       'long_description'  => $this->user->lang('cmsimport_long_desc'),
       'homepage'          => EQDKP_PROJECT_URL,
       'manuallink'        => false,
-      'plus_version'      => '2.1',
+      'plus_version'      => '2.3',
       'build'             => $this->build,
     ));
 
     $this->add_dependency(array(
-      'plus_version'      => '2.1'
+      'plus_version'      => '2.3'
     ));
 
 	// -- Menu --------------------------------------------
