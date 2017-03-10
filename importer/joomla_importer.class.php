@@ -187,12 +187,12 @@ if (!class_exists("joomla_importer")){
 			$out = '<fieldset class="settings" id="{fieldsets.ID}">
 		<dl>
 			<dt><label>'.$this->user->lang('ci_default_user_pages').'</label></dt>
-			<dd>'.new hdropdown('user', array('options' => $arrUser, 'value' => $this->user->id)).'</dd>
+			<dd>'.(new hdropdown('user', array('options' => $arrUser, 'value' => $this->user->id)))->output().'</dd>
 		</dl>';
 			if(!$blnHasCategories){
 				$out .= '<dl>
 			<dt><label>'.$this->user->lang('ci_default_category_pages').'</label></dt>
-			<dd>'.new hdropdown('category_pages', array('options' => $arrCategories, 'value' => 2)).'</dd>
+			<dd>'.(new hdropdown('category_pages', array('options' => $arrCategories, 'value' => 2)))->output().'</dd>
 		</dl>';
 			}
 		
