@@ -41,7 +41,7 @@ class cmsimport extends plugin_generic
     return array_merge(parent::$shortcuts, $shortcuts);
   }
 
-  public $version    = '1.1.0';
+  public $version    = '1.1.1';
   public $build      = '';
   public $copyright  = 'GodMod';
   public $vstatus    = 'Alpha';
