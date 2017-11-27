@@ -149,6 +149,10 @@ class CMSAdminImport extends page_generic
   				'page_title'    => $this->user->lang('ci_select_steps'),
   				'template_path' => $this->pm->get_data('cmsimport', 'template_path'),
   				'template_file' => 'admin/import_step.html',
+  				'page_path'			=> [
+  						['title'=>$this->user->lang('menu_admin_panel'), 'url'=>$this->root_path.'admin/'.$this->SID],
+  						['title'=>$this->user->lang('cmsimport').': '.$this->user->lang('ci_select_steps'), 'url'=>' '],
+  				],
   				'display'       => true
   		));
   	}
@@ -170,6 +174,10 @@ class CMSAdminImport extends page_generic
   				'page_title'    => $this->user->lang('ci_select_steps'),
   				'template_path' => $this->pm->get_data('cmsimport', 'template_path'),
   				'template_file' => 'admin/import_step.html',
+  				'page_path'			=> [
+  						['title'=>$this->user->lang('menu_admin_panel'), 'url'=>$this->root_path.'admin/'.$this->SID],
+  						['title'=>$this->user->lang('cmsimport').': '.$this->user->lang('ci_select_steps'), 'url'=>' '],
+  				],
   				'display'       => true
   		));
   	}
@@ -190,9 +198,15 @@ class CMSAdminImport extends page_generic
   		'STEP_NAME'			=> ($this->user->lang('ci_step_'.$step_id)) ? $this->user->lang('ci_step_'.$step_id) : ucfirst($step_id),
   	));
   	
+  	$strPagetitle = $this->user->lang('ci_step').': '.($this->user->lang('ci_step_'.$step_id)) ? $this->user->lang('ci_step_'.$step_id) : ucfirst($step_id);
+  	
   	$this->core->set_vars(array(
-  		'page_title'    => $this->user->lang('ci_step').': '.($this->user->lang('ci_step_'.$step_id)) ? $this->user->lang('ci_step_'.$step_id) : ucfirst($step_id),
+  		'page_title'    => $strPagetitle,
   		'template_path' => $this->pm->get_data('cmsimport', 'template_path'),
+  		'page_path'			=> [
+  					['title'=>$this->user->lang('menu_admin_panel'), 'url'=>$this->root_path.'admin/'.$this->SID],
+  					['title'=>$strPagetitle, 'url'=>' '],
+  			],
   		'template_file' => 'admin/import_step.html',
   		'display'       => true
   	));
@@ -221,6 +235,10 @@ class CMSAdminImport extends page_generic
   			'page_title'    => $this->user->lang('ci_select_steps'),
   			'template_path' => $this->pm->get_data('cmsimport', 'template_path'),
   			'template_file' => 'admin/import_select_steps.html',
+  			'page_path'			=> [
+  					['title'=>$this->user->lang('menu_admin_panel'), 'url'=>$this->root_path.'admin/'.$this->SID],
+  					['title'=>$this->user->lang('cmsimport').': '.$this->user->lang('ci_select_steps'), 'url'=>' '],
+  			],
   			'display'       => true
   	));
   }
@@ -307,6 +325,10 @@ class CMSAdminImport extends page_generic
       'page_title'    => $this->user->lang('ci_import'),
       'template_path' => $this->pm->get_data('cmsimport', 'template_path'),
       'template_file' => 'admin/import_init.html',
+    		'page_path'			=> [
+    				['title'=>$this->user->lang('menu_admin_panel'), 'url'=>$this->root_path.'admin/'.$this->SID],
+    				['title'=>$this->user->lang('cmsimport').': '.$this->user->lang('ci_import'), 'url'=>' '],
+    		],
       'display'       => true
     ));
   }
