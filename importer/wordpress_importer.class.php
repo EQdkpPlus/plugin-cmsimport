@@ -60,9 +60,8 @@ if (!class_exists("wordpress_importer")){
 			if($objResult){
 				while($arrUserdata = $objResult->fetchAssoc()){
 					if ($this->pdh->get('user', 'check_username', array(sanitize($arrUserdata['user_login']))) != 'false'){
-						$strPassword = md5(generateRandomBytes());
-						$salt = $this->user->generate_salt();
-						$new_password = $this->user->encrypt_password($strPassword, $salt).':'.$salt;
+						$strPassword = random_string(40);
+						$new_password = $this->user->encrypt_password($strPassword);
 						$arrData = array(
 								'username'				=> $arrUserdata['user_login'],
 								'user_password'			=> $new_password,
